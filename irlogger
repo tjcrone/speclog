@@ -1,0 +1,19 @@
+#!/usr/local/bin/python
+# This program logs data from the CT09 IR thermometer.
+#
+# Timothy Crone (tjcrone@gmail.com)
+
+# open serial port
+ser = serial.Serial(
+  port='/dev/ttyUSB0',
+  baudrate=9600,
+  parity=serial.PARITY_NONE,
+  stopbits=serial.STOPBITS_ONE,
+  bytesize=serial.EIGHTBITS)
+ser.open()
+
+# read serial data and print to screen
+while True:
+  bytesToRead = ser.inWaiting()
+  x = ser.read(bytesToRead)
+  print x
