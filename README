@@ -5,9 +5,12 @@ from cameras and instruments in the SpecLab.
 
 Example usage:
 
+  This will eventually work something like this:
+  > speclab -i ir -t 3600 outputfile.log
 
 Options:
-
+ -i name         instrument to log
+ -t seconds      time to log	
 
 To clone this repository:
  hg clone https://bitbucket.org/tjcrone/speclab
