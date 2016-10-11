@@ -1,12 +1,12 @@
-SPECLAB
+SPECLOG
 
-This repository contains a set of tools for interacting with and logging data
+This repository contains a tool for interacting with and logging data
 from cameras and instruments in the SpecLab.
 
 Example usage:
 
   This will eventually work something like this:
-  > speclab -i ir -t 3600 outputfile.log
+  > speclog -i ir -t 3600 outputfile.log
 
 Options:
  -i name         instrument to log
