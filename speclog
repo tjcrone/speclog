@@ -1,0 +1,37 @@
+#!/usr/local/bin/python
+# This program logs data from speclab instruments.
+#
+# Timothy Crone (tjcrone@gmail.com)
+
+# imports
+import sys, serial, time  
+
+# define ports for each instrument
+mb_port='/dev/tty.usbserial-FT97SF3N'
+
+# open mass balance serial port
+mb = serial.Serial(
+  port=mb_port,
+  baudrate=9600,
+  parity=serial.PARITY_NONE,
+  stopbits=serial.STOPBITS_TWO,
+  bytesize=serial.SEVENBITS)
+
+# read serial data and print to screen
+while True:
+  #time.sleep(2)
+  #bytesToRead = ser.inWaiting()
+  #x = ser.read(bytesToRead)
+  x = mb.readline()
+  #print len(x)
+  sys.stdout.write('%s' % x)
+  #print x
+
+  #if len(x)==17:
+  #  sys.stdout.write('%s' % x)
+
+  #print len(x)
+
+  
+  #sys.stdout.Oprint x
+  #print ord(x[1])
