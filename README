@@ -21,6 +21,11 @@ To update to a certain tag (version):
 
 Requirements:
 
-
+To do:
+ command line option parser
+ ability to stop logging with a button press
+ elegant failures on issues with the serial device
+ allow 'no data' entry if one device is turned off
+ 
 Author:
  Timothy Crone (tjcrone@gmail.com)
