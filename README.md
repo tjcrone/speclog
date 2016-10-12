@@ -5,8 +5,8 @@ from instruments in the SpecLab.
 
 Example usage:
 
-&nbsp;&nbsp;This will eventually work something like this:<br>
-&nbsp;&nbsp;`$ speclog -d mb -i 5 -t 3600 outputfile.log`
+This will eventually work something like this:  
+    `$ speclog -d mb -i 5 -t 3600 outputfile.log`
 
 Options:<br>
 &nbsp;&nbsp;-d name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; device to log<br>
