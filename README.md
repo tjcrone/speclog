@@ -1,6 +1,6 @@
 SPECLOG
 
-This repository contains tools for interacting with and logging data<br>
+This repository contains tools for interacting with and logging data  
 from instruments in the SpecLab.
 
 Example usage:
