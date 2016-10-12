@@ -34,7 +34,9 @@ while True:
   # print results to screen
   if len(mb_data)>1:
     mb_value = mb_data[-2].split('G')[0].replace(' ','')
-    sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
+  else:
+    mb_value = 'nd'
+  sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
 
   # flush input buffer
   mb.reset_input_buffer()
