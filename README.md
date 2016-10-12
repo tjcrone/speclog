@@ -1,26 +1,26 @@
 SPECLOG
 
-This repository contains a tool for interacting with and logging data
+This repository contains tools for interacting with and logging data<br>
 from instruments in the SpecLab.
 
 Example usage:
 
-  This will eventually work something like this:
-  > speclog -d mb -i 5 -t 3600 outputfile.log
+&nbsp;&nbsp;This will eventually work something like this:<br>
+&nbsp;&nbsp;`$ speclog -d mb -i 5 -t 3600 outputfile.log`
 
-Options:
- -d name         device to log
- -i seconds      interval between log entries
- -t seconds      total time to log
+Options:<br>
+&nbsp;&nbsp;-d name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; device to log<br>
+&nbsp;&nbsp;-i seconds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interval between log entries<br>
+&nbsp;&nbsp;-t seconds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total time to log <br>
 
-To clone this repository:
- hg clone https://bitbucket.org/tjcrone/speclab
+To clone this repository:<br>
+&nbsp;&nbsp;hg clone https://bitbucket.org/tjcrone/speclab
 
-To update to a certain tag (version):
- hg pull && hg update v0.1
+To update to a certain tag (version):<br>
+&nbsp;&nbsp;hg pull && hg update v0.1
 
 Requirements:
 
 
-Author:
- Timothy Crone (tjcrone@gmail.com)
+Author:<br>
+&nbsp;&nbsp;Timothy Crone (tjcrone@gmail.com)
