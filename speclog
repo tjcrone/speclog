@@ -1,16 +1,24 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 # This program logs data from speclab instruments.
 #
 # Timothy Crone (tjcrone@gmail.com)
 
 # imports
-import sys, serial, time  
+import sys, serial, time, argparse
+
+# parse arguments
+parser = argparse.ArgumentParser(description='Log data from SpecLab instruments.')
+parser.add_argument(
+  "-i",
+  dest="interval",
+  metavar="seconds",
+  type=int,
+  default=5,
+  help="interval between log entries (default: 5)")
+args = parser.parse_args()
 
 # define ports for each instrument
 mb_port='/dev/tty.usbserial-FT97SF3N'
-
-# define logging interval in seconds
-interval = 5
 
 # open mass balance serial port
 mb = serial.Serial(
@@ -21,22 +29,33 @@ mb = serial.Serial(
   bytesize=serial.SEVENBITS,
   timeout=0)
 
+# initialize some counters
+total_seconds = 0
+n = 0
+
 # infinite loop to log data
 while True:
-  # sleep for logging interval
-  time.sleep(interval - time.time() % interval)
+  # collect a sample every second
+  time.sleep(1 - time.time() % 1)
   mb_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
+
+  # increment counters
+  total_seconds = total_seconds+1
+  n = n+1
 
   # read data from serial port
   mb_waiting = mb.inWaiting()
   mb_data = mb.read(mb_waiting).split('\n')
 
-  # print results to screen
-  if len(mb_data)>1:
-    mb_value = mb_data[-2].split('G')[0].replace(' ','')
-  else:
-    mb_value = 'nd'
-  sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
+  # log sample according to the logging inverval
+  if n==args.interval or total_seconds==1:
+    n = 0
+    # print results to screen
+    if len(mb_data)>1:
+      mb_value = mb_data[-2].split('G')[0].replace(' ','')
+    else:
+      mb_value = 'nd'
+    sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
 
   # flush input buffer
-  mb.reset_input_buffer()
+  #mb.flushInput()
