@@ -8,12 +8,7 @@ import sys, serial, time, argparse
 
 # parse arguments
 parser = argparse.ArgumentParser(description='Log data from SpecLab instruments.')
-parser.add_argument(
-  "-i",
-  dest="interval",
-  metavar="seconds",
-  type=int,
-  default=5,
+parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
   help="interval between log entries (default: 5)")
 args = parser.parse_args()
 
@@ -30,12 +25,12 @@ mb = serial.Serial(
   timeout=0)
 
 # initialize some counters
-total_seconds = 0
-n = 0
+total_seconds = 0 # total number of seconds elapsed
+n = 0 # number of subsamples collected on the interval
 
 # infinite loop to log data
 while True:
-  # collect a sample every second
+  # collect a subsample every one second
   time.sleep(1 - time.time() % 1)
   mb_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
 
@@ -56,6 +51,7 @@ while True:
     else:
       mb_value = 'nd'
     sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
+    sys.stdout.flush()
 
-  # flush input buffer
+  # flush input buffer (I don't know if this is necessary)
   #mb.flushInput()
