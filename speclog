@@ -28,7 +28,7 @@ for dev in args.device:
   if len(dev)>2:
     parser.error("argument -d: device option takes a maximum of two arguments")
 
-# simple device object
+# simple device object for namespace convenience
 class Device(object):
   pass
 
@@ -41,15 +41,15 @@ for dev in args.device:
     mb = Device()
     mb.name = 'mass balance'
     mb.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
-      stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, timeout=0.5)
+      stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, timeout=0.25)
     if len(dev)>1:
       mb.ser.port = dev[1]
     else:
       mb.ser.port = mb_port
   elif dev[0] == 'ir':
-    # create  ir thermometer serial object
+    # create  ir pyrometer serial object
     ir = Device()
-    ir.name = 'ir thermometer'
+    ir.name = 'ir pyrometer'
     ir.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
       stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0.1)
     if len(dev)>1:
@@ -72,24 +72,28 @@ if ir: connect(ir)
 total_seconds = 0 # total number of seconds elapsed
 n = 0 # number of subsamples collected on the interval
 
+# function to check if device value is a valid float
+def check_float(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+
 # infinite loop to log data
 while True:
   # sleep for one second
   time.sleep(1 - time.time() % 1)
 
-  # clear mb input buffer every second
+  # clear mb input buffer (needs to be done often)
   if mb: mb.ser.flushInput()
 
   # increment counters
   total_seconds = total_seconds+1
   n = n+1
 
-  # read data from serial port
-  #mb_waiting = mb.inWaiting()
-  #mb_data = mb.read(mb_waiting).split('\n')
-
   # log sample according to the logging inverval
-  if n==args.interval or total_seconds==1:
+  if n == args.interval or total_seconds == 1:
     n = 0
 
     # get sample time
@@ -99,9 +103,15 @@ while True:
     if mb:
       mb.ser.flushInput()
       mb_data = mb.ser.readline().strip()
+      mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
       # format mb value
-      if len(mb_data)>1:
-        mb_value = mb_data[-2].split('G')[0].replace(' ','')
+      if len(mb_data)>0:
+        mb_value = mb_data.split(' ')[0]
+        # check if mb_value is a float
+        if not check_float(mb_value):
+          mb_value = "ND"
+      else:
+        mb_value = 'ND'
     else:
       mb_value = 'ND'
 
@@ -116,15 +126,12 @@ while True:
           ir_value = ir_data
         else:
           ir_value = ir_data.split(' ')[0]
+          if not check_float(ir_value):
+            ir_value = "ND"
       else:
         ir_value = 'ND'
     else:
       ir_value = 'ND'
 
     # print results to screen
-    #if len(mb_data)>1:
-    #  mb_value = mb_data[-2].split('G')[0].replace(' ','')
-    #else:
-    #  mb_value = 'nd'
-    #sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
-    #sys.stdout.flush()
+    sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
