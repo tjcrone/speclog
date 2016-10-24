@@ -59,14 +59,14 @@ for dev in args.device:
   else:
     parser.error("argument -d: the first device argument must be either 'mb' or 'ir'")
 
-# open mass balance serial port
-mb = serial.Serial(
-  port=mb_port,
-  baudrate=9600,
-  parity=serial.PARITY_NONE,
-  stopbits=serial.STOPBITS_TWO,
-  bytesize=serial.SEVENBITS,
-  timeout=0)
+# connector routine
+def connect(device):
+  print "Connecting to %s ..." % device.name
+  device.ser.open()
+
+# connect to defined devices
+if mb: connect(mb)
+if ir: connect(ir)
 
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
