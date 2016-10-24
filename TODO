@@ -1,6 +1,6 @@
 1. make the connector routine more robust, maybe waiting for the device
    to come online
-2. output file option
-3. timer option
-4. number of samples option
-5. non-ugly keyboard quit
+2. add output file option
+3. add timer option
+4. add number of samples option
+5. implement keyboard quit
