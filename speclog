@@ -4,8 +4,8 @@
 # Timothy Crone (tjcrone@gmail.com)
 
 # default device ports
-mb_port='/dev/tty.usbserial-FT97SF3N'
-ir_port='/dev/tty.ir_port'
+mb_port = '/dev/tty.usbserial-FT97SF3N'
+ir_port = '/dev/tty.ir_port'
 
 # imports
 import sys, serial, time, argparse
@@ -74,28 +74,57 @@ n = 0 # number of subsamples collected on the interval
 
 # infinite loop to log data
 while True:
-  # collect a subsample every one second
+  # sleep for one second
   time.sleep(1 - time.time() % 1)
-  mb_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
+
+  # clear mb input buffer every second
+  if mb: mb.ser.flushInput()
 
   # increment counters
   total_seconds = total_seconds+1
   n = n+1
 
   # read data from serial port
-  mb_waiting = mb.inWaiting()
-  mb_data = mb.read(mb_waiting).split('\n')
+  #mb_waiting = mb.inWaiting()
+  #mb_data = mb.read(mb_waiting).split('\n')
 
   # log sample according to the logging inverval
   if n==args.interval or total_seconds==1:
     n = 0
-    # print results to screen
-    if len(mb_data)>1:
-      mb_value = mb_data[-2].split('G')[0].replace(' ','')
-    else:
-      mb_value = 'nd'
-    sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
-    sys.stdout.flush()
 
-  # flush input buffer (I don't know if this is necessary)
-  #mb.flushInput()
+    # get sample time
+    sample_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
+
+    # get mb data
+    if mb:
+      mb.ser.flushInput()
+      mb_data = mb.ser.readline().strip()
+      # format mb value
+      if len(mb_data)>1:
+        mb_value = mb_data[-2].split('G')[0].replace(' ','')
+    else:
+      mb_value = 'ND'
+
+    # get ir data
+    if ir:
+      ir.ser.flushInput()
+      ir.ser.write('TEM ?\n')
+      ir_data = ir.ser.readline().strip()
+      # format ir value
+      if len(ir_data)>0:
+        if 'ERROR' in ir_data:
+          ir_value = ir_data
+        else:
+          ir_value = ir_data.split(' ')[0]
+      else:
+        ir_value = 'ND'
+    else:
+      ir_value = 'ND'
+
+    # print results to screen
+    #if len(mb_data)>1:
+    #  mb_value = mb_data[-2].split('G')[0].replace(' ','')
+    #else:
+    #  mb_value = 'nd'
+    #sys.stdout.write('%s,%s\n' % (mb_time, mb_value))
+    #sys.stdout.flush()
