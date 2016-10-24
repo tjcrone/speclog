@@ -28,6 +28,37 @@ for dev in args.device:
   if len(dev)>2:
     parser.error("argument -d: device option takes a maximum of two arguments")
 
+# simple device object
+class Device(object):
+  pass
+
+# create requested devices
+mb = []
+ir = []
+for dev in args.device:
+  if dev[0] == 'mb':
+    # create  mass balance serial object
+    mb = Device()
+    mb.name = 'mass balance'
+    mb.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
+      stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, timeout=0.5)
+    if len(dev)>1:
+      mb.ser.port = dev[1]
+    else:
+      mb.ser.port = mb_port
+  elif dev[0] == 'ir':
+    # create  ir thermometer serial object
+    ir = Device()
+    ir.name = 'ir thermometer'
+    ir.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
+      stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0.1)
+    if len(dev)>1:
+      ir.ser.port = dev[1]
+    else:
+      ir.ser.port = ir_port
+  else:
+    parser.error("argument -d: the first device argument must be either 'mb' or 'ir'")
+
 # open mass balance serial port
 mb = serial.Serial(
   port=mb_port,
