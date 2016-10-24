@@ -3,6 +3,10 @@
 #
 # Timothy Crone (tjcrone@gmail.com)
 
+# default device ports
+mb_port='/dev/tty.usbserial-FT97SF3N'
+ir_port='/dev/tty.ir_port'
+
 # imports
 import sys, serial, time, argparse
 
@@ -23,9 +27,6 @@ if not args.device:
 for dev in args.device:
   if len(dev)>2:
     parser.error("argument -d: device option takes a maximum of two arguments")
-
-# define ports for each instrument
-mb_port='/dev/tty.usbserial-FT97SF3N'
 
 # open mass balance serial port
 mb = serial.Serial(
