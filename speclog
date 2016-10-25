@@ -28,7 +28,7 @@ for dev in args.device:
   if len(dev)>2:
     parser.error("argument -d: device option takes a maximum of two arguments")
   if not os.path.exists(dev[1]):
-    parser.error("argument -d: device path %s does not exist" % dev[1])
+    parser.error("argument -d: device path '%s' does not exist" % dev[1])
 
 # simple device object for namespace convenience
 class Device(object):
@@ -63,29 +63,35 @@ for dev in args.device:
 
 # connector routine
 def connect(device):
-  print "Connecting to %s ..." % device.name
+  sys.stderr.write("Connecting to %s ... " % device.name)
   num_tries = 10
   n = 0
   while True:
     try:
-      device.ser.open()
+      test=1 # TESTING
+      #device.ser.open()
     except:
       if sys.exc_info()[1].errno == 16: # loop for num_tries on resource busy error
-        #print sys.exc_info()[1]
         n = n+1
         if n == num_tries:
-          print ("Error opening %s port %s after %i tries: Resource busy." % (device.name, device.ser.port, num_tries))
+          sys.stderr.write("failed.\nError opening %s port '%s' after %i tries: Resource busy.\n" %
+            (device.name, device.ser.port, num_tries))
           raise SystemExit
         else:
           time.sleep(1)
           continue
       else:
-        raise # raise exception on any other error
+        raise # raise the SerialException on any other error
+    sys.stderr.write("done.\n")
     break
 
 # connect to defined devices
 if mb: connect(mb)
 if ir: connect(ir)
+
+# TESTING
+mb=[]
+ir=[]
 
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
@@ -99,10 +105,12 @@ def check_float(value):
   except ValueError:
     return False
 
-quit()
+# write logging started message
+sys.stderr.write("Logging data every %i s.\n" % args.interval)
 
 # infinite loop to log data
 while True:
+
   # sleep for one second
   time.sleep(1 - time.time() % 1)
 
@@ -156,3 +164,4 @@ while True:
 
     # print results to screen
     sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
+    sys.stdout.flush()
