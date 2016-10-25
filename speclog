@@ -4,24 +4,44 @@
 # Timothy Crone (tjcrone@gmail.com)
 
 # default device ports
-mb_port = '/dev/tty.usbserial-FT97SF3N'
-ir_port = '/dev/tty.ir_port'
+mb_port='/dev/tty.Bluetooth-Modem'
+ir_port='/dev/tty.Bluetooth-Modem'
+#mb_port = '/dev/tty.usbserial-FT97SF3N'
+#ir_port = '/dev/tty.ir_port'
 
 # imports
 import sys, os, serial, time, argparse
 
+# default output file function
+def default_output():
+  output = time.strftime('%Y_%m_%d_%H%M%S.log', time.gmtime())
+  return output
+
 # parse arguments
 parser = argparse.ArgumentParser(description='Log data from SpecLab instruments.')
 parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
-  default=[], action='append',
-  help="device [and port] to log (options: mb, ir)")
+  default=[], action='append', help="device [and port] to log (options: mb, ir)")
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
   help="interval between log entries (default: 5)")
+parser.add_argument("-o", dest="output", metavar="filename", type=str,
+  default=default_output(), help="output file name")
 args = parser.parse_args()
 
 # default devices
 if not args.device:
   args.device = [['mb', mb_port], ['ir', ir_port]]
+
+# error check output file
+if os.path.isdir(args.output):
+  parser.error("argument -o: output file argument '%s' is a directory" % args.output)
+if os.path.exists(args.output):
+  parser.error("argument -o: output file '%s' already exists" % args.output)
+try:
+  f = open(args.output, 'a')
+  f.close()
+  os.remove(args.output)
+except:
+  raise
 
 # error check device arguments
 for dev in args.device:
@@ -95,6 +115,7 @@ ir=[]
 
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
+total_samples = 0 # total number of samples logged
 n = 0 # number of subsamples collected on the interval
 
 # function to check if device value is a valid float
@@ -105,12 +126,14 @@ def check_float(value):
   except ValueError:
     return False
 
+# open output file
+f = open(args.output, 'w')
+
 # write logging started message
-sys.stderr.write("Logging data every %i s.\n" % args.interval)
+sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
 
 # infinite loop to log data
 while True:
-
   # sleep for one second
   time.sleep(1 - time.time() % 1)
 
@@ -123,6 +146,7 @@ while True:
 
   # log sample according to the logging inverval
   if n == args.interval or total_seconds == 1:
+    total_samples = total_samples+1
     n = 0
 
     # get sample time
@@ -162,6 +186,17 @@ while True:
     else:
       ir_value = 'ND'
 
-    # print results to screen
+    # write results to screen
     sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
     sys.stdout.flush()
+
+    # write results to file
+    f.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
+    f.flush()
+
+    # quit after some number of samples for testing
+    if total_samples == 3:
+      f.close()
+      if mb: mb.ser.close()
+      if ir: ir.ser.close()
+      raise SystemExit
