@@ -8,7 +8,7 @@ mb_port = '/dev/tty.usbserial-FT97SF3N'
 ir_port = '/dev/tty.ir_port'
 
 # imports
-import sys, serial, time, argparse
+import sys, os, serial, time, argparse
 
 # parse arguments
 parser = argparse.ArgumentParser(description='Log data from SpecLab instruments.')
@@ -23,10 +23,12 @@ args = parser.parse_args()
 if not args.device:
   args.device = [['mb', mb_port], ['ir', ir_port]]
 
-# check number of device arguments
+# error check device arguments
 for dev in args.device:
   if len(dev)>2:
     parser.error("argument -d: device option takes a maximum of two arguments")
+  if not os.path.exists(dev[1]):
+    parser.error("argument -d: device path %s does not exist" % dev[1])
 
 # simple device object for namespace convenience
 class Device(object):
@@ -62,7 +64,24 @@ for dev in args.device:
 # connector routine
 def connect(device):
   print "Connecting to %s ..." % device.name
-  device.ser.open()
+  num_tries = 10
+  n = 0
+  while True:
+    try:
+      device.ser.open()
+    except:
+      if sys.exc_info()[1].errno == 16: # loop for num_tries on resource busy error
+        #print sys.exc_info()[1]
+        n = n+1
+        if n == num_tries:
+          print ("Error opening %s port %s after %i tries: Resource busy." % (device.name, device.ser.port, num_tries))
+          raise SystemExit
+        else:
+          time.sleep(1)
+          continue
+      else:
+        raise # raise exception on any other error
+    break
 
 # connect to defined devices
 if mb: connect(mb)
@@ -79,6 +98,8 @@ def check_float(value):
     return True
   except ValueError:
     return False
+
+quit()
 
 # infinite loop to log data
 while True:

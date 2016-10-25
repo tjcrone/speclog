@@ -4,3 +4,4 @@
 3. add timer option
 4. add number of samples option
 5. implement keyboard quit
+6. properly close and destroy serial objects
