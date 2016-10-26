@@ -1,17 +1,19 @@
 SPECLOG
 
-This repository contains tools for interacting with and logging data  
-from instruments in the SpecLab.
+This repository contains a Python script for logging data from
+instruments in the SpecLab.
 
 Example usage:
 
-This will eventually work something like this:  
- $ speclog -d mb -i 5 -t 3600 outputfile.log
+ $ speclog -d mb /dev/tty.usbserial-FT97SF3N -i 5 -t 3600 -o outputfile.log
 
 Options:
- -d name        device to log
- -i seconds     interval between log entries
- -t seconds     total time to log
+  -h, --help          show the help message and exit
+  -d name [port ...]  device [and port] to log (options: mb, ir)
+  -i seconds          interval between log entries (default: 5)
+  -n samples          number of samples to log (default: inf)
+  -t seconds          total time to log (default: inf)
+  -o filename         output file name (default: based on start time)
 
 To clone this repository:
  hg clone https://bitbucket.org/tjcrone/speclab
@@ -22,10 +24,7 @@ To update to a certain tag (version):
 Requirements:
 
 To do:
- command line option parser
- ability to stop logging with a button press
- elegant failures on issues with the serial device
- fix subsample sleep (across midnight)
+ fix subsample sleep across midnight
  
 Author:
  Timothy Crone (tjcrone@gmail.com)
