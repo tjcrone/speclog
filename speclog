@@ -39,6 +39,8 @@ parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
   default=[], action='append', help="device [and port] to log (options: mb, ir)")
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
   help="interval between log entries (default: 5)")
+parser.add_argument("-n", dest="samples", metavar="samples", type=int, default=[],
+  help="number of samples to collect before quitting")
 parser.add_argument("-o", dest="output", metavar="filename", type=str,
   default=default_output(), help="output file name")
 args = parser.parse_args()
@@ -148,6 +150,9 @@ sys.stderr.write("Press Ctrl-C to quit logging.\n")
 # loop to log data
 while running:
   # quit if requested number of samples have been collected
+  if args.samples:
+    if total_samples == args.samples:
+      clean_quit()
 
   # quit if requested logging time has elapsed 
 
@@ -156,7 +161,7 @@ while running:
   time.sleep(1 - time.time() % 1)
 
   # clear mb input buffer (needs to be done often)
-  if mb: mb.ser.flushInput()
+  #if mb: mb.ser.flushInput()
 
   # increment counters
   total_seconds = total_seconds+1
@@ -172,9 +177,10 @@ while running:
 
     # get mb data
     if mb:
-      mb.ser.flushInput()
-      mb_data = mb.ser.readline().strip()
-      mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
+      mb_data = []
+      #mb.ser.flushInput()
+      #mb_data = mb.ser.readline().strip()
+      #mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
       # format mb value
       if len(mb_data)>0:
         mb_value = mb_data.split(' ')[0]
@@ -188,9 +194,10 @@ while running:
 
     # get ir data
     if ir:
-      ir.ser.flushInput()
-      ir.ser.write('TEM ?\n')
-      ir_data = ir.ser.readline().strip()
+      ir_data = []
+      #ir.ser.flushInput()
+      #ir.ser.write('TEM ?\n')
+      #ir_data = ir.ser.readline().strip()
       # format ir value
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
@@ -211,10 +218,3 @@ while running:
     # write results to file
     f.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
     f.flush()
-
-    # quit after some number of samples for testing
-    #if total_samples == 3:
-    #  f.close()
-    #  if mb: mb.ser.close()
-    #  if ir: ir.ser.close()
-    #  raise SystemExit
