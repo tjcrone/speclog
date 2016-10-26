@@ -40,9 +40,9 @@ parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
   help="interval between log entries (default: 5)")
 parser.add_argument("-n", dest="total_samples", metavar="samples", type=int, default=[],
-  help="number of samples to collect (default: inf)")
+  help="number of samples to log (default: inf)")
 parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, default=[],
-  help="amount of time to log (default: inf)")
+  help="total time to log (default: inf)")
 parser.add_argument("-o", dest="output", metavar="filename", type=str,
   default=default_output(), help="output file name (default: based on start time)")
 args = parser.parse_args()
