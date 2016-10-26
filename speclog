@@ -10,7 +10,23 @@ ir_port='/dev/tty.Bluetooth-Modem'
 #ir_port = '/dev/tty.ir_port'
 
 # imports
-import sys, os, serial, time, argparse
+import sys, os, serial, time, argparse, signal
+
+# signal handler function
+running=True
+def signal_handler(signal, frame):
+  running=False
+  clean_quit()
+signal.signal(signal.SIGINT, signal_handler)
+
+# clean up and quit function
+def clean_quit():
+  sys.stderr.write("\b\bCleaning up ... ")
+  if f: f.close()
+  if mb: mb.ser.close()
+  if ir: ir.ser.close()
+  sys.stderr.write("done.\n")
+  raise SystemExit
 
 # default output file function
 def default_output():
@@ -109,15 +125,6 @@ def connect(device):
 if mb: connect(mb)
 if ir: connect(ir)
 
-# TESTING
-mb=[]
-ir=[]
-
-# initialize some counters
-total_seconds = 0 # total number of seconds elapsed
-total_samples = 0 # total number of samples logged
-n = 0 # number of subsamples collected on the interval
-
 # function to check if device value is a valid float
 def check_float(value):
   try:
@@ -126,14 +133,25 @@ def check_float(value):
   except ValueError:
     return False
 
+# initialize some counters
+total_seconds = 0 # total number of seconds elapsed
+total_samples = 0 # total number of samples logged
+n = 0 # number of subsamples collected on the interval
+
 # open output file
 f = open(args.output, 'w')
 
 # write logging started message
 sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
+sys.stderr.write("Press Ctrl-C to quit logging.\n")
 
-# infinite loop to log data
-while True:
+# loop to log data
+while running:
+  # quit if requested number of samples have been collected
+
+  # quit if requested logging time has elapsed 
+
+
   # sleep for one second
   time.sleep(1 - time.time() % 1)
 
@@ -187,16 +205,16 @@ while True:
       ir_value = 'ND'
 
     # write results to screen
-    sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
-    sys.stdout.flush()
+    #sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
+    #sys.stdout.flush()
 
     # write results to file
     f.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
     f.flush()
 
     # quit after some number of samples for testing
-    if total_samples == 3:
-      f.close()
-      if mb: mb.ser.close()
-      if ir: ir.ser.close()
-      raise SystemExit
+    #if total_samples == 3:
+    #  f.close()
+    #  if mb: mb.ser.close()
+    #  if ir: ir.ser.close()
+    #  raise SystemExit
