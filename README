@@ -1,7 +1,7 @@
 SPECLOG
 
-This repository contains a Python script for logging data from
-instruments in the SpecLab.
+This repository contains a Python script for logging data from instruments
+in the SpecLab.
 
 Example usage:
 
