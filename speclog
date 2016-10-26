@@ -141,7 +141,7 @@ def check_float(value):
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
 total_samples = 0 # total number of samples logged
-n = 0 # number of subsamples collected on the interval
+interval_seconds = 0 # number of seconds elapsed per interval
 
 # open output file
 f = open(args.output, 'w')
@@ -170,12 +170,12 @@ while running:
 
   # increment counters
   total_seconds = total_seconds+1
-  n = n+1
+  interval_seconds = interval_seconds+1
 
   # log sample according to the logging inverval
-  if n == args.interval or total_seconds == 1:
+  if interval_seconds == args.interval or total_seconds == 1:
     total_samples = total_samples+1
-    n = 0
+    interval_seconds = 0
 
     # get sample time
     sample_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
