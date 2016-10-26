@@ -17,7 +17,7 @@ Options:
   -o filename         output file name (default: based on start time)
 
 To clone this repository:
-  hg clone https://bitbucket.org/tjcrone/speclab
+  hg clone https://bitbucket.org/tjcrone/speclog
 
 To update to a certain tag (version):
   hg pull && hg update v0.1
