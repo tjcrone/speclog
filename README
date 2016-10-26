@@ -5,10 +5,11 @@ in the SpecLab.
 
 Example usage:
 
- $ speclog -d mb /dev/tty.usbserial-FT97SF3N -i 5 -t 3600 -o outputfile.log
+  $ speclog -d mb /dev/tty.usbserial-FT97SF3N -i 5 -t 3600 -o outputfile.log
 
 Options:
   -h, --help          show the help message and exit
+  -v, --version       show program's version number and exit
   -d name [port ...]  device [and port] to log (options: mb, ir)
   -i seconds          interval between log entries (default: 5)
   -n samples          number of samples to log (default: inf)
@@ -16,15 +17,15 @@ Options:
   -o filename         output file name (default: based on start time)
 
 To clone this repository:
- hg clone https://bitbucket.org/tjcrone/speclab
+  hg clone https://bitbucket.org/tjcrone/speclab
 
 To update to a certain tag (version):
- hg pull && hg update v0.1
+  hg pull && hg update v0.1
 
 Requirements:
 
 To do:
- fix subsample sleep across midnight
+  fix subsample sleep across midnight
  
 Author:
- Timothy Crone (tjcrone@gmail.com)
+  Timothy Crone (tjcrone@gmail.com)
