@@ -151,10 +151,10 @@ if not args.screen:
 
 # write logging started message
 if args.screen:
-  sys.stderr.write("Logging data to stdout every %i s.\n" % args.interval)
+  sys.stderr.write("\nLogging data to stdout every %i s.\n\n" % args.interval)
 else:
-  sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
-sys.stderr.write("Press Ctrl-C to quit logging.\n")
+  sys.stderr.write("\nLogging data to %s every %i s.\n\n" % (args.output, args.interval))
+sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
 
 # loop to log data
 while running:
