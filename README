@@ -1,11 +1,15 @@
 SPECLOG
 
 This repository contains a Python script for logging data from instruments
-in the SpecLab.
+in the SpecLab. Currently it can log data from the mass balance, the
+infrared pyrometer, or both of them at the same time. By default this
+program logs data from both of the instruments using their default ports,
+and it will log indefinitely. See the options below for information on how
+to change the default behavior.
 
 Example usage:
 
-  $ speclog -d mb /dev/tty.usbserial-FT97SF3N -i 5 -t 3600 -o outputfile.log
+  $ speclog -d mb /dev/tty.usbserial-FT9JW0SS -i 10 -t 3600 -o outputfile.log
 
 Options:
   -h, --help          show the help message and exit
