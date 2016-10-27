@@ -15,6 +15,7 @@ Options:
   -n samples          number of samples to log (default: inf)
   -t seconds          total time to log (default: inf)
   -o filename         output file name (default: based on start time)
+  -s                  output to screen instead of file (default: false)
 
 To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
