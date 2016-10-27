@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-# This program logs data from speclab instruments.
+# This program logs data from speclab instruments. See the README file for usage
+# notes, or use speclag -h to display the help information.
 #
 # Timothy Crone (tjcrone@gmail.com)
 
 # default device ports
-mb_port='/dev/tty.Bluetooth-Modem'
-ir_port='/dev/tty.Bluetooth-Modem'
-#mb_port = '/dev/tty.usbserial-FT97SF3N'
-#ir_port = '/dev/tty.ir_port'
+mb_port = '/dev/tty.usbserial-FT9JW0SS'
+ir_port = '/dev/tty.usbserial-FT9JW7R8'
 
 # imports
 import sys, os, serial, time, argparse, signal
@@ -109,8 +108,7 @@ def connect(device):
   n = 0
   while True:
     try:
-      test=1 # TESTING
-      #device.ser.open()
+      device.ser.open()
     except:
       if sys.exc_info()[1].errno == 16: # loop for num_tries on resource busy error
         n = n+1
@@ -166,7 +164,7 @@ while running:
   time.sleep(1 - time.time() % 1)
 
   # clear mb input buffer (needs to be done often)
-  #if mb: mb.ser.flushInput()
+  if mb: mb.ser.flushInput()
 
   # increment counters
   total_seconds = total_seconds+1
@@ -182,10 +180,9 @@ while running:
 
     # get mb data
     if mb:
-      mb_data = []
-      #mb.ser.flushInput()
-      #mb_data = mb.ser.readline().strip()
-      #mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
+      mb.ser.flushInput()
+      mb_data = mb.ser.readline().strip()
+      mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
       # format mb value
       if len(mb_data)>0:
         mb_value = mb_data.split(' ')[0]
@@ -199,10 +196,9 @@ while running:
 
     # get ir data
     if ir:
-      ir_data = []
-      #ir.ser.flushInput()
-      #ir.ser.write('TEM ?\n')
-      #ir_data = ir.ser.readline().strip()
+      ir.ser.flushInput()
+      ir.ser.write('TEM ?\n')
+      ir_data = ir.ser.readline().strip()
       # format ir value
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
