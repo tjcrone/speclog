@@ -34,7 +34,7 @@ def default_output():
 
 # parse arguments
 parser = argparse.ArgumentParser(description='Data logger for SpecLab instruments')
-parser.add_argument('-v', '--version', action='version', version='%(prog)s version 0.1')
+parser.add_argument('-v', '--version', action='version', version='%(prog)s version 0.2dev')
 parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
   default=[], action='append', help="device [and port] to log (options: mb, ir)")
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
