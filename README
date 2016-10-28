@@ -7,8 +7,11 @@ program logs data from both of the instruments using their default ports,
 and it will log indefinitely. See the options below for information on how
 to change the default behavior.
 
-Example usage:
+Output format:
+  Log entries have the following format with times in UTC:
+  year,month,day,hour,minute,second,mass balance value,ir pyromter value
 
+Example usage:
   $ speclog -d mb /dev/tty.usbserial-FT9JW0SS -i 10 -t 3600 -o outputfile.log
 
 Options:
