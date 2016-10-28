@@ -51,7 +51,24 @@ args = parser.parse_args()
 
 # default devices
 if not args.device:
-  args.device = [['mb', mb_port], ['ir', ir_port]]
+  args.device = [['mb'], ['ir']]
+
+# default ports
+for dev in args.device:
+  if len(dev) == 1:
+    if dev[0] == 'mb':
+      dev.append(mb_port)
+    elif dev[0] == 'ir':
+      dev.append(ir_port)
+    else:
+      parser.error("argument -d: the first device argument must be either 'mb' or 'ir'")
+
+# error check device arguments
+for dev in args.device:
+  if len(dev)>2:
+    parser.error("argument -d: device option takes a maximum of two arguments")
+  if not os.path.exists(dev[1]):
+    parser.error("argument -d: device path '%s' does not exist" % dev[1])
 
 # error check output file
 if not args.screen:
@@ -65,13 +82,6 @@ if not args.screen:
     os.remove(args.output)
   except:
     raise
-
-# error check device arguments
-for dev in args.device:
-  if len(dev)>2:
-    parser.error("argument -d: device option takes a maximum of two arguments")
-  if not os.path.exists(dev[1]):
-    parser.error("argument -d: device path '%s' does not exist" % dev[1])
 
 # simple device object for namespace convenience
 class Device(object):
@@ -101,8 +111,6 @@ for dev in args.device:
       ir.ser.port = dev[1]
     else:
       ir.ser.port = ir_port
-  else:
-    parser.error("argument -d: the first device argument must be either 'mb' or 'ir'")
 
 # connector routine
 def connect(device):
@@ -151,9 +159,9 @@ if not args.screen:
 
 # write logging started message
 if args.screen:
-  sys.stderr.write("\nLogging data to stdout every %i s.\n\n" % args.interval)
+  sys.stderr.write("Logging data to stdout every %i s.\n" % args.interval)
 else:
-  sys.stderr.write("\nLogging data to %s every %i s.\n\n" % (args.output, args.interval))
+  sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
 sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
 
 # loop to log data
@@ -210,7 +218,7 @@ while running:
       # format ir value
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
-          ir_value = ir_data
+          ir_value = "ND"
         else:
           ir_value = ir_data.split(' ')[0]
           if not check_float(ir_value):
