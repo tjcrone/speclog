@@ -7,10 +7,6 @@ program logs data from both of the instruments using their default ports,
 and it will log indefinitely. See the options below for information on how
 to change the default behavior.
 
-Output format:
-  Log entries have the following format with times in UTC:
-  year,month,day,hour,minute,second,mass balance value,ir pyromter value
-
 Example usage:
   $ speclog -d mb /dev/tty.usbserial-FT9JW0SS -i 10 -t 3600 -o outputfile.log
 
@@ -23,6 +19,10 @@ Options:
   -t seconds          total time to log (default: inf)
   -o filename         output file name (default: based on start time)
   -s                  output to screen instead of file (default: false)
+
+Output format:
+  Log entries have the following format with times in UTC:
+  year,month,day,hour,minute,second,mass balance value,ir pyromter value
 
 To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
