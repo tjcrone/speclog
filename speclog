@@ -210,28 +210,46 @@ while running:
     else:
       mb_value = 'ND'
 
-    # get ir data
+    # get ir temperature
     if ir:
       ir.ser.flushInput()
       ir.ser.write('TEM ?\n')
       ir_data = ir.ser.readline().strip()
-      # format ir value
+      # format ir temperature
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
-          ir_value = "ND"
+          ir_tmp = "ND"
         else:
-          ir_value = ir_data.split(' ')[0]
-          if not check_float(ir_value):
+          ir_tmp = ir_data.split(' ')[0]
+          if not check_float(ir_tmp):
             ir_value = "ND"
       else:
-        ir_value = 'ND'
+        ir_tmp = 'ND'
     else:
-      ir_value = 'ND'
+      ir_tmp = 'ND'
+
+    # get ir ambient
+    if ir:
+      ir.ser.flushInput()
+      ir.ser.write('AMB ?\n')
+      ir_data = ir.ser.readline().strip()
+      # format ir ambient
+      if len(ir_data)>0:
+        if 'ERROR' in ir_data:
+          ir_amb = "ND"
+        else:
+          ir_amb = ir_data.split()[2]
+          if not check_float(ir_amb):
+            ir_amb = "ND"
+      else:
+        ir_amb = 'ND'
+    else:
+      ir_amb = 'ND'
 
     # write results to screen or to output file
     if args.screen:
-      sys.stdout.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
+      sys.stdout.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
       sys.stdout.flush()
     else:
-      f.write('%s,%s,%s\n' % (sample_time, mb_value, ir_value))
+      f.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
       f.flush()
