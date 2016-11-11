@@ -33,11 +33,10 @@ To update to a certain tag (version):
 Requirements:
 
 To do:
-  look at possible sleep across midnight issue
   add screen output as default, and quiet option
   add ability to set the emissivity
   output emissivity to screen at start of program
-  add ambient temperature output
+  look at possible sleep across midnight issue
  
 Author:
   Timothy Crone (tjcrone@gmail.com)
