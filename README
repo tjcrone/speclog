@@ -35,6 +35,8 @@ Requirements:
   pySerial
 
 To do:
+  increase information in header, include column names, program version number
+  add option to suppress output to file
   look at possible sleep across midnight issue
  
 Author:
