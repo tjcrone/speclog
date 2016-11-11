@@ -30,12 +30,12 @@ ir = []
 
 # clean up and quit function
 def clean_quit():
-  if not args.veryquiet:
+  if not args.quiet:
     sys.stderr.write("\b\bCleaning up ... ")
   if f: f.close()
   if mb: mb.ser.close()
   if ir: ir.ser.close()
-  if not args.veryquiet:
+  if not args.quiet:
     sys.stderr.write("done.\n")
   raise SystemExit
 
@@ -60,14 +60,8 @@ parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, def
 parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs='?',
   default=argparse.SUPPRESS, help="output file name (default: based on start time)")
 parser.add_argument("-q", dest="quiet", action='store_true',
-  default=False, help="suppress output to stdout")
-parser.add_argument("-qq", dest="veryquiet", action='store_true',
-  default=False, help="suppress all screen output")
+  default=False, help="suppress all output to screen")
 args = parser.parse_args()
-
-#set quiet if veryquiet
-if args.veryquiet:
-  args.quiet = True
 
 # define output file as necessary
 try:
@@ -133,7 +127,7 @@ for dev in args.device:
 
 # connector routine
 def connect(device):
-  if not args.veryquiet:
+  if not args.quiet:
     sys.stderr.write("Connecting to %s ... " % device.name)
   num_tries = 10
   n = 0
@@ -144,7 +138,7 @@ def connect(device):
       if sys.exc_info()[1].errno == 16: # loop for num_tries on resource busy error
         n = n+1
         if n == num_tries:
-          if not args.veryquiet:
+          if not args.quiet:
             sys.stderr.write("failed.\nError opening %s port '%s' after %i tries: Resource busy.\n" %
               (device.name, device.ser.port, num_tries))
           raise SystemExit
@@ -153,7 +147,7 @@ def connect(device):
           continue
       else:
         raise # raise the SerialException on any other error
-    if not args.veryquiet:
+    if not args.quiet:
       sys.stderr.write("done.\n")
     break
 
@@ -207,9 +201,9 @@ if args.output:
 
 # write logging started message to stderr
 if args.output:
-  if not args.veryquiet:
+  if not args.quiet:
     sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
-if not args.veryquiet:
+if not args.quiet:
   sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
  
 # write header
