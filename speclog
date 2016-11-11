@@ -65,6 +65,10 @@ parser.add_argument("-qq", dest="veryquiet", action='store_true',
   default=False, help="suppress all screen output")
 args = parser.parse_args()
 
+#set quiet if veryquiet
+if args.veryquiet:
+  args.quiet = True
+
 # define output file as necessary
 try:
   if args.output is None:
@@ -118,20 +122,14 @@ for dev in args.device:
     mb.name = 'mass balance'
     mb.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
       stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, timeout=0.25)
-    if len(dev)>1:
-      mb.ser.port = dev[1]
-    else:
-      mb.ser.port = mb_port
+    mb.ser.port = dev[1]
   elif dev[0] == 'ir':
     # create  ir pyrometer serial object
     ir = Device()
     ir.name = 'ir pyrometer'
     ir.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
       stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0.1)
-    if len(dev)>1:
-      ir.ser.port = dev[1]
-    else:
-      ir.ser.port = ir_port
+    ir.ser.port = dev[1]
 
 # connector routine
 def connect(device):
@@ -190,7 +188,6 @@ print ir_emi
 
 clean_quit()
 
-
 # function to check if device value is a valid float
 def check_float(value):
   try:
@@ -208,19 +205,17 @@ interval_seconds = 0 # number of seconds elapsed per interval
 if args.output:
   f = open(args.output, 'w')
 
-# write logging started message stderr
+# write logging started message to stderr
 if args.output:
   if not args.veryquiet:
     sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
 if not args.veryquiet:
   sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
  
-# write header to screen
+# write header
 if not args.quiet:
   sys.stdout.write('Emissivity: %f\n' % (args.emissvity))
   sys.stdout.flush()
-
-# write header to file
 if args.output:
   f.write('Emissivity: %f\n' % (args.emissvity))
   f.flush()
