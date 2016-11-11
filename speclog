@@ -60,7 +60,7 @@ parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, def
 parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs='?',
   default=argparse.SUPPRESS, help="output file name (default: based on start time)")
 parser.add_argument("-q", dest="quiet", action='store_true',
-  default=False, help="suppress all output to screen")
+  default=False, help="suppress screen output")
 args = parser.parse_args()
 
 # define output file as necessary
