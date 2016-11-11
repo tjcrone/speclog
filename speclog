@@ -4,12 +4,17 @@
 #
 # Timothy Crone (tjcrone@gmail.com)
 
-# default device ports
-mb_port = '/dev/tty.usbserial-FT9JW0SS'
-ir_port = '/dev/tty.usbserial-FT9JW7R8'
-
 # imports
 import sys, os, serial, time, argparse, signal
+from socket import gethostname 
+
+# get hostname
+hostname=gethostname()
+
+# default device ports
+if hostname=='europa':
+  mb_port = '/dev/tty.usbserial-FT9JW0SS'
+  ir_port = '/dev/tty.usbserial-FT9JW7R8'
 
 # signal handler function
 running=True
@@ -57,7 +62,7 @@ parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs='?'
 parser.add_argument("-q", dest="quiet", action='store_true',
   default=False, help="suppress output to stdout")
 parser.add_argument("-qq", dest="veryquiet", action='store_true',
-  default=False, help="suppress all output")
+  default=False, help="suppress all screen output")
 args = parser.parse_args()
 
 # define output file as necessary
@@ -130,7 +135,6 @@ for dev in args.device:
 
 # connector routine
 def connect(device):
-  if 
   if not args.veryquiet:
     sys.stderr.write("Connecting to %s ... " % device.name)
   num_tries = 10
