@@ -24,7 +24,7 @@ Options:
 
 Output format:
   Log entries have the following format with times in UTC:
-  year,month,day,hour,minute,second,mass balance value,ir temp,ir ambient
+  year,month,day,hour,minute,second,mass,ir temp,ir ambient
 
 To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
