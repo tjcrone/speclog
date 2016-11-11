@@ -50,25 +50,18 @@ parser.add_argument('-v', '--version', action='version', version='%(prog)s versi
 parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
   default=[], action='append', help="device [and port] to log (options: mb, ir)")
 parser.add_argument("-e", dest="emissivity", metavar="emissivity", type=float, default=1.0,
-  help="change emissivity (default: 1.0)")
+  nargs=1, help="change emissivity (default: 1.0)")
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
-  help="interval between log entries (default: 5)")
+  nargs=1, help="interval between log entries (default: 5)")
 parser.add_argument("-n", dest="total_samples", metavar="samples", type=int, default=[],
-  help="number of samples to log (default: inf)")
+  nargs=1, help="number of samples to log (default: inf)")
 parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, default=[],
-  help="total time to log (default: inf)")
-parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs='?',
-  default=argparse.SUPPRESS, help="output file name (default: based on start time)")
+  nargs=1, help="total time to log (default: inf)")
+parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs=1,
+  default=default_output(), help="output file name (default: based on start time)")
 parser.add_argument("-q", dest="quiet", action='store_true',
   default=False, help="suppress screen output")
 args = parser.parse_args()
-
-# define output file as necessary
-try:
-  if args.output is None:
-    args.output = default_output()
-except:
-  args.output = False
 
 # default devices
 if not args.device:
@@ -92,17 +85,16 @@ for dev in args.device:
     parser.error("argument -d: device path '%s' does not exist" % dev[1])
 
 # error check output file
-if args.output:
-  if os.path.isdir(args.output):
-    parser.error("argument -o: output file argument '%s' is a directory" % args.output)
-  if os.path.exists(args.output):
-    parser.error("argument -o: output file '%s' already exists" % args.output)
-  try:
-    f = open(args.output, 'a')
-    f.close()
-    os.remove(args.output)
-  except:
-    raise
+if os.path.isdir(args.output):
+  parser.error("argument -o: output file argument '%s' is a directory" % args.output)
+if os.path.exists(args.output):
+  parser.error("argument -o: output file '%s' already exists" % args.output)
+try:
+  f = open(args.output, 'a')
+  f.close()
+  os.remove(args.output)
+except:
+  raise
 
 # simple device object for namespace convenience
 class Device(object):
@@ -196,23 +188,19 @@ total_samples = 0 # total number of samples logged
 interval_seconds = 0 # number of seconds elapsed per interval
 
 # open output file
-if args.output:
-  f = open(args.output, 'w')
+f = open(args.output, 'w')
 
 # write logging started message to stderr
-if args.output:
-  if not args.quiet:
-    sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
 if not args.quiet:
+  sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
   sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
  
 # write header
 if not args.quiet:
   sys.stdout.write('Emissivity: %f\n' % (args.emissvity))
   sys.stdout.flush()
-if args.output:
-  f.write('Emissivity: %f\n' % (args.emissvity))
-  f.flush()
+f.write('Emissivity: %f\n' % (args.emissvity))
+f.flush()
 
 # loop to log data
 while running:
@@ -302,6 +290,5 @@ while running:
       sys.stdout.flush()
 
     # write results to file
-    if args.output:
-      f.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
-      f.flush()
+    f.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
+    f.flush()
