@@ -18,24 +18,22 @@ Options:
   -n samples          number of samples to log (default: inf)
   -t seconds          total time to log (default: inf)
   -o filename         output file name (default: based on start time)
-  -s                  output to screen instead of file (default: false)
+  -q                  suppress output to stdout
+  -qq                 suppress all screen output
 
 Output format:
   Log entries have the following format with times in UTC:
-  year,month,day,hour,minute,second,mass balance value,ir pyromter value
+  year,month,day,hour,minute,second,mass balance value,ir temperature,ir ambient temperature 
 
 To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
 
 To update to a certain tag (version):
-  hg pull && hg update v0.1
+  hg pull && hg update v0.2
 
 Requirements:
 
 To do:
-  add screen output as default, and quiet option
-  add ability to set the emissivity
-  output emissivity to screen at start of program
   look at possible sleep across midnight issue
  
 Author:
