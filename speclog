@@ -43,11 +43,18 @@ parser.add_argument("-n", dest="total_samples", metavar="samples", type=int, def
   help="number of samples to log (default: inf)")
 parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, default=[],
   help="total time to log (default: inf)")
-parser.add_argument("-o", dest="output", metavar="filename", type=str,
-  default=default_output(), help="output file name (default: based on start time)")
-parser.add_argument("-s", dest="screen", action='store_true',
-  default=False, help="output to screen instead of file (default: false)")
+parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs='?',
+  default=argparse.SUPPRESS, help="output file name (default: based on start time)")
+parser.add_argument("-q", dest="quiet", action='store_true',
+  default=False, help="supress output to stdout")
 args = parser.parse_args()
+
+# define output file as necessary
+try:
+  if args.output is None:
+    args.output = default_output()
+except:
+  args.output = False
 
 # default devices
 if not args.device:
@@ -71,7 +78,7 @@ for dev in args.device:
     parser.error("argument -d: device path '%s' does not exist" % dev[1])
 
 # error check output file
-if not args.screen:
+if args.output:
   if os.path.isdir(args.output):
     parser.error("argument -o: output file argument '%s' is a directory" % args.output)
   if os.path.exists(args.output):
@@ -153,14 +160,11 @@ total_samples = 0 # total number of samples logged
 interval_seconds = 0 # number of seconds elapsed per interval
 
 # open output file
-f = []
-if not args.screen:
+if args.output:
   f = open(args.output, 'w')
 
 # write logging started message
-if args.screen:
-  sys.stderr.write("Logging data to stdout every %i s.\n" % args.interval)
-else:
+if args.output:
   sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
 sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
 
@@ -246,10 +250,12 @@ while running:
     else:
       ir_amb = 'ND'
 
-    # write results to screen or to output file
-    if args.screen:
+    # write results to screen
+    if not args.quiet:
       sys.stdout.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
       sys.stdout.flush()
-    else:
+
+    # write results to file
+    if args.output:
       f.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
       f.flush()
