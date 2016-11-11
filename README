@@ -19,8 +19,7 @@ Options:
   -n samples          number of samples to log (default: inf)
   -t seconds          total time to log (default: inf)
   -o filename         output file name (default: based on start time)
-  -q                  suppress output to stdout
-  -qq                 suppress all screen output
+  -q                  suppress screen output
 
 Output format:
   Log entries have the following format with times in UTC:
