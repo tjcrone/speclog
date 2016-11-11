@@ -14,6 +14,7 @@ Options:
   -h, --help          show the help message and exit
   -v, --version       show program's version number and exit
   -d name [port ...]  device [and port] to log (options: mb, ir)
+  -e emissivity       change emissivity (default: 1.0)
   -i seconds          interval between log entries (default: 5)
   -n samples          number of samples to log (default: inf)
   -t seconds          total time to log (default: inf)
@@ -23,7 +24,7 @@ Options:
 
 Output format:
   Log entries have the following format with times in UTC:
-  year,month,day,hour,minute,second,mass balance value,ir temperature,ir ambient temperature 
+  year,month,day,hour,minute,second,mass balance value,ir temp,ir ambient
 
 To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
@@ -32,6 +33,7 @@ To update to a certain tag (version):
   hg pull && hg update v0.2
 
 Requirements:
+  pySerial
 
 To do:
   look at possible sleep across midnight issue
