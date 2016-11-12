@@ -37,8 +37,11 @@ Requirements:
   pySerial
 
 To do:
-  increase information in header, include column names, program version number
-  add option to suppress output to file
+  continue working on header, include column names?
+  move sample format to function
+  remove the emissivity get after testing
+  add option to suppress output to file?
+  add additional hostname for SpecLab laptop
   look at possible sleep across midnight issue
  
 Author:
