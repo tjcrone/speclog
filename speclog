@@ -14,7 +14,9 @@ hostname=gethostname()
 # default device ports
 if hostname=='europa':
   mb_port = '/dev/tty.usbserial-FT9JW0SS'
+  mb_port = '/dev/tty.Bluetooth-Modem'
   ir_port = '/dev/tty.usbserial-FT9JW7R8'
+  ir_port = '/dev/tty.Bluetooth-Modem'
 
 # signal handler function
 running=True
@@ -31,7 +33,7 @@ ir = []
 # clean up and quit function
 def clean_quit():
   if not args.quiet:
-    sys.stderr.write("\b\bCleaning up ... ")
+    sys.stderr.write("\b\b\nCleaning up ... ")
   if f: f.close()
   if mb: mb.ser.close()
   if ir: ir.ser.close()
@@ -44,20 +46,25 @@ def default_output():
   output = time.strftime('%Y_%m_%d_%H%M%S.log', time.gmtime())
   return output
 
+# version function
+version = '0.3dev'
+def get_version():
+  return ('%%(prog)s version %s' % version)
+
 # parse arguments
 parser = argparse.ArgumentParser(description='Data logger for SpecLab instruments')
-parser.add_argument('-v', '--version', action='version', version='%(prog)s version 0.3dev')
+parser.add_argument('-v', '--version', action='version', version=get_version())
 parser.add_argument("-d", dest="device", nargs='+', metavar=('name', 'port'),
   default=[], action='append', help="device [and port] to log (options: mb, ir)")
 parser.add_argument("-e", dest="emissivity", metavar="emissivity", type=float, default=1.0,
-  nargs=1, help="change emissivity (default: 1.0)")
+  help="change emissivity (default: 1.0)")
 parser.add_argument("-i", dest="interval", metavar="seconds", type=int, default=5,
-  nargs=1, help="interval between log entries (default: 5)")
+  help="interval between log entries (default: 5)")
 parser.add_argument("-n", dest="total_samples", metavar="samples", type=int, default=[],
-  nargs=1, help="number of samples to log (default: inf)")
+  help="number of samples to log (default: inf)")
 parser.add_argument("-t", dest="total_seconds", metavar="seconds", type=int, default=[],
-  nargs=1, help="total time to log (default: inf)")
-parser.add_argument("-o", dest="output", metavar="filename", type=str, nargs=1,
+  help="total time to log (default: inf)")
+parser.add_argument("-o", dest="output", metavar="filename", type=str,
   default=default_output(), help="output file name (default: based on start time)")
 parser.add_argument("-q", dest="quiet", action='store_true',
   default=False, help="suppress screen output")
@@ -99,6 +106,9 @@ except:
 # simple device object for namespace convenience
 class Device(object):
   pass
+
+# ****for testing****
+args.device = []
 
 # create requested devices
 for dev in args.device:
@@ -170,10 +180,6 @@ if ir:
 else:
   ir_emi = 'ND'
 
-print ir_emi
-
-clean_quit()
-
 # function to check if device value is a valid float
 def check_float(value):
   try:
@@ -195,11 +201,23 @@ if not args.quiet:
   sys.stderr.write("Logging data to %s every %i s.\n" % (args.output, args.interval))
   sys.stderr.write("Press Ctrl-C to quit logging.\n\n")
  
+# header string function
+def header():
+  device_string=''
+  for dev in args.device:
+    device_string = device_string + dev[0] + ', '
+  device_string = device_string[:-2]
+  header_string = [("speclog version: %s\n" % version),
+    ("devices logged: " + device_string + "\n"),
+    ("emissivity: %.3f\n" % args.emissivity),
+    ("logging interval: %i s\n" % args.interval)]
+  return "".join(header_string)
+
 # write header
 if not args.quiet:
-  sys.stdout.write('Emissivity: %f\n' % (args.emissvity))
+  sys.stdout.write(header())
   sys.stdout.flush()
-f.write('Emissivity: %f\n' % (args.emissvity))
+f.write(header())
 f.flush()
 
 # loop to log data
