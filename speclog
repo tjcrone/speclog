@@ -13,22 +13,22 @@ hostname=gethostname()
 
 # default device ports
 if hostname=='europa':
-  mb_port = '/dev/tty.usbserial-FT9JW0SS'
+  #mb_port = '/dev/tty.usbserial-FT9JW0SS'
   mb_port = '/dev/tty.Bluetooth-Modem'
-  ir_port = '/dev/tty.usbserial-FT9JW7R8'
+  #ir_port = '/dev/tty.usbserial-FT9JW7R8'
   ir_port = '/dev/tty.Bluetooth-Modem'
-
-# signal handler function
-running=True
-def signal_handler(signal, frame):
-  running=False
-  clean_quit()
-signal.signal(signal.SIGINT, signal_handler)
 
 # define required globals as empty
 f = []
 mb = []
 ir = []
+
+# ctrl-c handler function
+running=True
+def signal_handler(signal, frame):
+  running=False
+  clean_quit()
+signal.signal(signal.SIGINT, signal_handler)
 
 # clean up and quit function
 def clean_quit():
@@ -107,7 +107,7 @@ except:
 class Device(object):
   pass
 
-# ****for testing****
+# uncomment the following line for testing without any connected devices
 args.device = []
 
 # create requested devices
@@ -154,8 +154,10 @@ def connect(device):
     break
 
 # connect to defined devices
-if mb: connect(mb)
-if ir: connect(ir)
+if mb:
+  connect(mb)
+if ir:
+  connect(ir)
 
 # set ir emissivity
 if ir:
@@ -179,6 +181,7 @@ if ir:
     ir_emi = 'ND'
 else:
   ir_emi = 'ND'
+print "instrument emissivity: " + ir_emi
 
 # function to check if device value is a valid float
 def check_float(value):
@@ -236,7 +239,8 @@ while running:
   time.sleep(1 - time.time() % 1)
 
   # clear mb input buffer (needs to be done often)
-  if mb: mb.ser.flushInput()
+  if mb:
+    mb.ser.flushInput()
 
   # increment counters
   total_seconds = total_seconds+1
