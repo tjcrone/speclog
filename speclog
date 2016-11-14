@@ -171,25 +171,6 @@ def check_float(value):
   except ValueError:
     return False
 
-# get ir emissivity
-# this can be cut once we trust the emissivity write
-#if ir:
-#  ir.ser.flushInput()
-#  ir.ser.write('EMI ?\n')
-#  ir_data = ir.ser.readline().strip()
-#  # format ir emissivity
-#  if len(ir_data)>0:
-#    if 'ERROR' in ir_data:
-#      ir_emi = "ND"
-#    else:
-#      ir_emi = ir_data.split()[1]
-#      if not check_float(ir_emi):
-#        ir_emi = "ND"
-#  else:
-#    ir_emi = 'ND'
-#else:
-#  ir_emi = 'ND'
-
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
 total_samples = 0 # total number of samples logged
