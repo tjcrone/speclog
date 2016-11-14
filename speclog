@@ -45,7 +45,7 @@ def default_output():
   return output
 
 # version function
-version = '0.3dev'
+version = '0.3'
 def get_version():
   return ('%%(prog)s version %s' % version)
 
