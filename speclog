@@ -14,9 +14,7 @@ hostname=gethostname()
 # default device ports
 if hostname=='europa':
   mb_port = '/dev/tty.usbserial-FT9JW0SS'
-  #mb_port = '/dev/tty.Bluetooth-Modem'
   ir_port = '/dev/tty.usbserial-FT9JW7R8'
-  #ir_port = '/dev/tty.Bluetooth-Modem'
 
 # define required globals as empty
 f = []
