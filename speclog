@@ -13,10 +13,10 @@ hostname=gethostname()
 
 # default device ports
 if hostname=='europa':
-  #mb_port = '/dev/tty.usbserial-FT9JW0SS'
-  mb_port = '/dev/tty.Bluetooth-Modem'
-  #ir_port = '/dev/tty.usbserial-FT9JW7R8'
-  ir_port = '/dev/tty.Bluetooth-Modem'
+  mb_port = '/dev/tty.usbserial-FT9JW0SS'
+  #mb_port = '/dev/tty.Bluetooth-Modem'
+  ir_port = '/dev/tty.usbserial-FT9JW7R8'
+  #ir_port = '/dev/tty.Bluetooth-Modem'
 
 # define required globals as empty
 f = []
@@ -33,7 +33,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # clean up and quit function
 def clean_quit():
   if not args.quiet:
-    sys.stderr.write("\b\b\nCleaning up ... ")
+    sys.stderr.write("\b\b  \nCleaning up ... ")
   if f: f.close()
   if mb: mb.ser.close()
   if ir: ir.ser.close()
@@ -108,7 +108,7 @@ class Device(object):
   pass
 
 # uncomment the following line for testing without any connected devices
-args.device = []
+#args.device = []
 
 # create requested devices
 for dev in args.device:
@@ -163,26 +163,6 @@ if ir:
 if ir:
   ir.ser.write('EMI %f\n' % args.emissivity)
 
-# get ir emissivity
-# this can be cut once we trust the emissivity write
-if ir:
-  ir.ser.flushInput()
-  ir.ser.write('EMI ?\n')
-  ir_data = ir.ser.readline().strip()
-  # format ir emissivity
-  if len(ir_data)>0:
-    if 'ERROR' in ir_data:
-      ir_emi = "ND"
-    else:
-      ir_emi = ir_data.split(' ')[0]
-      if not check_float(ir_emi):
-        ir_emi = "ND"
-  else:
-    ir_emi = 'ND'
-else:
-  ir_emi = 'ND'
-print "instrument emissivity: " + ir_emi
-
 # function to check if device value is a valid float
 def check_float(value):
   try:
@@ -190,6 +170,25 @@ def check_float(value):
     return True
   except ValueError:
     return False
+
+# get ir emissivity
+# this can be cut once we trust the emissivity write
+#if ir:
+#  ir.ser.flushInput()
+#  ir.ser.write('EMI ?\n')
+#  ir_data = ir.ser.readline().strip()
+#  # format ir emissivity
+#  if len(ir_data)>0:
+#    if 'ERROR' in ir_data:
+#      ir_emi = "ND"
+#    else:
+#      ir_emi = ir_data.split()[1]
+#      if not check_float(ir_emi):
+#        ir_emi = "ND"
+#  else:
+#    ir_emi = 'ND'
+#else:
+#  ir_emi = 'ND'
 
 # initialize some counters
 total_seconds = 0 # total number of seconds elapsed
@@ -261,7 +260,10 @@ while running:
       mb_data = mb.ser.readline().strip() # get two lines in case the first one is truncated
       # format mb value
       if len(mb_data)>0:
-        mb_value = mb_data.split(' ')[0]
+        if mb_data.split()[0] == '-':
+          mb_value = '-' + mb_data.split()[1]
+        else:
+          mb_value = mb_data.split()[0]
         # check if mb_value is a float
         if not check_float(mb_value):
           mb_value = "ND"
