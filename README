@@ -31,7 +31,7 @@ To clone this repository:
   hg clone https://bitbucket.org/tjcrone/speclog
 
 To update to a certain tag (version):
-  hg pull && hg update v0.2
+  hg pull && hg update v0.3
 
 Requirements:
   pySerial
@@ -39,7 +39,6 @@ Requirements:
 To do:
   continue working on header, include column names?
   move sample format to function
-  remove the emissivity get after testing
   add option to suppress output to file?
   add additional hostname for SpecLab laptop
   look at possible sleep across midnight issue
