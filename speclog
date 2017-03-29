@@ -15,11 +15,13 @@ hostname=gethostname()
 if hostname=='europa':
   mb_port = '/dev/tty.usbserial-FT9JW0SS'
   ir_port = '/dev/tty.usbserial-FT9JW7R8'
+  mm_port = '/dev/ttyUSB0'
 
 # define required globals as empty
 f = []
 mb = []
 ir = []
+mm = []
 
 # ctrl-c handler function
 running=True
@@ -35,6 +37,7 @@ def clean_quit():
   if f: f.close()
   if mb: mb.ser.close()
   if ir: ir.ser.close()
+  if mm: mm.ser.close()
   if not args.quiet:
     sys.stderr.write("done.\n")
   raise SystemExit
@@ -79,8 +82,10 @@ for dev in args.device:
       dev.append(mb_port)
     elif dev[0] == 'ir':
       dev.append(ir_port)
+    elif dev[0] == 'mm':
+      dev.append(mm_port)
     else:
-      parser.error("argument -d: the first device argument must be either 'mb' or 'ir'")
+      parser.error("argument -d: the first device argument must be 'mb', 'ir', or 'mm'")
 
 # error check device arguments
 for dev in args.device:
@@ -124,6 +129,13 @@ for dev in args.device:
     ir.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
       stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0.25)
     ir.ser.port = dev[1]
+  elif dev[0] == 'mm':
+    # create  multimeter serial object
+    mm = Device()
+    mm.name = 'multimeter'
+    mm.ser = serial.Serial(baudrate=9600, parity=serial.PARITY_NONE,
+      stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0.25)
+    mm.ser.port = dev[1]
 
 # connector routine
 def connect(device):
@@ -156,6 +168,8 @@ if mb:
   connect(mb)
 if ir:
   connect(ir)
+if mm:
+  connect(mm)
 
 # set ir emissivity
 if ir:
@@ -288,6 +302,26 @@ while running:
         ir_amb = 'ND'
     else:
       ir_amb = 'ND'
+
+    # get mm value
+    if mm:
+      mm.ser.flushInput()
+      mm.ser.write('FETCH?\n')
+      time.sleep(0.05)
+      mm_data = mm.ser.read(mm.ser.in_waiting).strip()
+      # format mm value
+      if len(mm_data)>0:
+        print mm_data
+        #if 'ERROR' in ir_data:
+        #  ir_amb = "ND"
+        #else:
+        #  ir_amb = ir_data.split()[2]
+        #  if not check_float(ir_amb):
+        #    ir_amb = "ND"
+      else:
+        mm_cur = 'ND'
+    else:
+      mm_cur = 'ND'
 
     # write results to screen
     if not args.quiet:
