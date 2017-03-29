@@ -5,7 +5,7 @@
 # Timothy Crone (tjcrone@gmail.com)
 
 # imports
-import sys, os, serial, time, argparse, signal
+import sys, os, serial, time, argparse, signal, datetime
 from socket import gethostname 
 
 # get hostname
@@ -15,6 +15,9 @@ hostname=gethostname()
 if hostname=='europa':
   mb_port = '/dev/tty.usbserial-FT9JW0SS'
   ir_port = '/dev/tty.usbserial-FT9JW7R8'
+  mm_port = '/dev/ttyUSB0'
+
+if hostname=='newt':
   mm_port = '/dev/ttyUSB0'
 
 # define required globals as empty
@@ -228,7 +231,7 @@ while running:
       clean_quit()
 
   # sleep for one second
-  time.sleep(1 - time.time() % 1)
+  #time.sleep(1 - time.time() % 1)
 
   # clear mb input buffer (needs to be done often)
   if mb:
@@ -244,7 +247,7 @@ while running:
     interval_seconds = 0
 
     # get sample time
-    sample_time = time.strftime('%Y,%m,%d,%H,%M,%S', time.gmtime())
+    sample_time = datetime.datetime.now().strftime('%Y,%m,%d,%H,%M,%S.%f')
 
     # get mb data
     if mb:
@@ -307,17 +310,15 @@ while running:
     if mm:
       mm.ser.flushInput()
       mm.ser.write('FETCH?\n')
-      time.sleep(0.05)
+      time.sleep(0.2)
       mm_data = mm.ser.read(mm.ser.in_waiting).strip()
       # format mm value
       if len(mm_data)>0:
-        print mm_data
-        #if 'ERROR' in ir_data:
-        #  ir_amb = "ND"
-        #else:
-        #  ir_amb = ir_data.split()[2]
-        #  if not check_float(ir_amb):
-        #    ir_amb = "ND"
+        #print repr(mm_data)
+        if mm_data == 'FETCH?':
+          mm_cur = "ND"
+        else:
+          mm_cur = mm_data.split('\n')[1]
       else:
         mm_cur = 'ND'
     else:
@@ -325,9 +326,9 @@ while running:
 
     # write results to screen
     if not args.quiet:
-      sys.stdout.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
+      sys.stdout.write('%s,%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb, mm_cur))
       sys.stdout.flush()
 
     # write results to file
-    f.write('%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb))
+    f.write('%s,%s,%s,%s,%s\n' % (sample_time, mb_value, ir_tmp, ir_amb, mm_cur))
     f.flush()
