@@ -262,11 +262,11 @@ while running:
           mb_value = mb_data.split()[0]
         # check if mb_value is a float
         if not check_float(mb_value):
-          mb_value = "ND"
+          mb_value = "NaN"
       else:
-        mb_value = 'ND'
+        mb_value = 'NaN'
     else:
-      mb_value = 'ND'
+      mb_value = 'NaN'
 
     # get ir temperature
     if ir:
@@ -277,15 +277,15 @@ while running:
       # format ir temperature
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
-          ir_tmp = "ND"
+          ir_tmp = "NaN"
         else:
           ir_tmp = ir_data.split(' ')[0]
           if not check_float(ir_tmp):
-            ir_tmp = "ND"
+            ir_tmp = "NaN"
       else:
-        ir_tmp = 'ND'
+        ir_tmp = 'NaN'
     else:
-      ir_tmp = 'ND'
+      ir_tmp = 'NaN'
 
     # get ir ambient
     if ir:
@@ -296,15 +296,15 @@ while running:
       # format ir ambient
       if len(ir_data)>0:
         if 'ERROR' in ir_data:
-          ir_amb = "ND"
+          ir_amb = "NaN"
         else:
           ir_amb = ir_data.split()[2]
           if not check_float(ir_amb):
-            ir_amb = "ND"
+            ir_amb = "NaN"
       else:
-        ir_amb = 'ND'
+        ir_amb = 'NaN'
     else:
-      ir_amb = 'ND'
+      ir_amb = 'NaN'
 
     # get mm value
     if mm:
@@ -316,16 +316,16 @@ while running:
       # format mm value
       if len(mm_data)>0:
         if mm_data == 'FETCH?':
-          mm_cur = "ND"
+          mm_cur = "NaN"
         else:
           try:
             mm_cur = mm_data.split('\n')[1]
           except:
-            mm_cur = 'ND'
+            mm_cur = 'NaN'
       else:
-        mm_cur = 'ND'
+        mm_cur = 'NaN'
     else:
-      mm_cur = 'ND'
+      mm_cur = 'NaN'
 
     # write results to screen
     if not args.quiet:
