@@ -309,16 +309,19 @@ while running:
     # get mm value
     if mm:
       mm.ser.flushInput()
+      mm.ser.flushOutput()
       mm.ser.write('FETCH?\n')
       time.sleep(0.2)
       mm_data = mm.ser.read(mm.ser.in_waiting).strip()
       # format mm value
       if len(mm_data)>0:
-        #print repr(mm_data)
         if mm_data == 'FETCH?':
           mm_cur = "ND"
         else:
-          mm_cur = mm_data.split('\n')[1]
+          try:
+            mm_cur = mm_data.split('\n')[1]
+          except:
+            mm_cur = 'ND'
       else:
         mm_cur = 'ND'
     else:
